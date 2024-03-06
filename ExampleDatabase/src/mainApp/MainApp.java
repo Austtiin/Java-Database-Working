@@ -15,7 +15,7 @@ public class MainApp {
 
     // Database connection details
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://myservice-stockx-rasmussen-stockx-ajs.a.aivencloud.com:3306/contact_database?useSSL=true&requireSSL=true";
+    private static final String DB_URL = "myservice-stockx-rasmussen-stockx-ajs.a.aivencloud.com";
     private static final String DB_USER = "avnadmin";
     private static final String DB_PASSWORD = "AVNS_uYYq-8I32N-sLAwgIO0";
     private static final String SSL_CA_PATH = "C:\\Users\\Austin\\Downloads\\ca.pem";
@@ -41,8 +41,6 @@ public class MainApp {
             insertContact(nameF, nameL, phone, email);
 
             displayContacts();
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             INP.close(); // Close the Scanner
         }
