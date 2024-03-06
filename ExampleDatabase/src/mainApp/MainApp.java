@@ -49,7 +49,9 @@ public class MainApp {
     // This method is used to establish a connection to the database
     public static Connection getConnection() throws SQLException {
         try {
-            Class.forName(JDBC_DRIVER);
+            // Explicitly load the JDBC driver class
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
             return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         } catch (ClassNotFoundException e) {
             throw new SQLException("MySQL JDBC Driver not found", e);
