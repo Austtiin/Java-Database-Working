@@ -22,6 +22,7 @@ public class MainApp {
 
     public static void main(String[] args) {
         try {
+        	System.out.println("Classpath: " + System.getProperty("java.class.path"));
             createTableIfNotExists(); // Create the table if it does not exist
 
             System.out.println("Welcome to the contact database! Please enter the following details to add a new contact, they will be displayed after:");
