@@ -1,33 +1,81 @@
-// This file is used to connect to the database and retrieve data from it.
-
-
 package mainApp;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 public class DBConnection {
-    public static void main(String[] args) {
-    	// Establish a connection to the database
-        try (Connection connection = MainApp.getConnection();
-        		// Create a statement object to execute SQL queries
-             Statement statement = connection.createStatement();
-        		// Execute the query and store the results in a ResultSet object
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table")) {
+    // Database connection details
+	
 
-        	
-        		// Iterate through the result set and print the data
+    // This method is used to establish a connection to the database
+    public static Connection getConnection() throws SQLException {
+    	String host, port, databaseName, userName, password;
+        host = "myservice-stockx-rasmussen-stockx-ajs.a.aivencloud.com";
+        port = "17817";
+        userName = "avnadmin";
+        password = "AVNS_uYYq-8I32N-sLAwgIO0";
+        databaseName = "defaultdb";
+        
+        return DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?sslmode=require", userName, password);
+    }
+
+    // This method is used to create the contacts table if it does not exist
+    public static void createTableIfNotExists() {
+        try (Connection connection = getConnection();
+             // Create a prepared statement to execute SQL queries
+             PreparedStatement statement = connection.prepareStatement(
+                     "CREATE TABLE IF NOT EXISTS contactlists (id INT AUTO_INCREMENT PRIMARY KEY, " +
+                             "first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, " +
+                             "phone_number VARCHAR(15) NOT NULL, email_address VARCHAR(50) NOT NULL)")) {
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // This method is used to insert a new contact into the contacts table
+    public static void insertContact(String firstName, String lastName, String phoneNumber, String emailAddress) {
+        try (Connection connection = getConnection();
+             // Create a prepared statement to execute SQL queries
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO contacts (first_name, last_name, phone_number, email_address) VALUES (?, ?, ?, ?)")) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            statement.setString(3, phoneNumber);
+            statement.setString(4, emailAddress);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // This method is used to display all the contacts in the contacts table
+    public static void displayContacts() {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM contacts");
+             ResultSet resultSet = statement.executeQuery()) {
+
+            System.out.println("Contacts:");
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                // Process other columns as needed
-                System.out.println("ID: " + id + ", Name: " + name);
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                String phoneNumber = resultSet.getString("phone_number");
+                String emailAddress = resultSet.getString("email_address");
+
+                System.out.println("ID: " + id +
+                        ", First Name: " + firstName +
+                        ", Last Name: " + lastName +
+                        ", Phone Number: " + phoneNumber +
+                        ", Email Address: " + emailAddress);
             }
-            
-            // Close the connection
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
